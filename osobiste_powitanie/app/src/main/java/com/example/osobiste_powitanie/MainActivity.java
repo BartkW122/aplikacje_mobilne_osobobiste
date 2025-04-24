@@ -1,7 +1,10 @@
 package com.example.osobiste_powitanie;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,19 +30,50 @@ public class MainActivity extends AppCompatActivity {
         imie_input=findViewById(R.id.imie_input);
         btn_przywitaj=findViewById(R.id.button);
 
-        String imie_input_value=imie_input.getText().toString().trim();
 
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        if(imie_input_value.isEmpty()){
-            builder.setTitle("Błąd");
-            builder.setMessage("Proszę wpisać swoje imię!");
-            builder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Toast.makeText(MainActivity.this,"")
+
+        btn_przywitaj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String imie_input_value=imie_input.getText().toString().trim();
+
+                if(imie_input_value.isEmpty()){
+
+                    builder.setTitle("Błąd");
+                    builder.setMessage("Proszę wpisać swoje imię!");
+                    builder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(MainActivity.this,"OK!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.show();
+                }else{
+
+                    builder.setTitle("Potwierdzenie");
+                    builder.setMessage("Cześć "+imie_input_value+" ! Czy chcesz otrzymać powiadomienia powitalne?");
+                    builder.setPositiveButton("Tak, poproszę",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            NotificationChannel channel=new NotificationChannel("kanal_id","Witaj!", NotificationManager.IMPORTANCE_DEFAULT);
+                            channel.setDescription("Miło cię widzieć , "+imie_input_value+" !");
+                            Toast.makeText(MainActivity.this,"Powiadomieni zostało wysłane!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.setNegativeButton("Nie, dziękuję",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            Toast.makeText(MainActivity.this,"Rozumiemi.Nie wysyłam Powiadomienia!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.show();
                 }
-            });
-        }
+            }
+        });
+
     }
 
 }
