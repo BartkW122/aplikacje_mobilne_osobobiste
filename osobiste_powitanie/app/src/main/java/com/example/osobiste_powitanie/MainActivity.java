@@ -3,6 +3,10 @@ package com.example.osobiste_powitanie;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,14 +16,18 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+    private static  final  String CH_ID="ID";
 
     private EditText imie_input;
     private Button btn_przywitaj;
+    private String imie_input_value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +39,20 @@ public class MainActivity extends AppCompatActivity {
         btn_przywitaj=findViewById(R.id.button);
 
 
+
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         AlertDialog.Builder builder2=new AlertDialog.Builder(this);
-
+        CreatNotifiChannel();
         btn_przywitaj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String imie_input_value=imie_input.getText().toString().trim();
+                imie_input_value=imie_input.getText().toString().trim();
 
                 if(imie_input_value.isEmpty()){
 
                     builder.setTitle("Błąd");
                     builder.setMessage("Proszę wpisać swoje imię!");
+
                     builder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -58,9 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     builder2.setPositiveButton("Tak, poproszę",new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-
-                            NotificationChannel channel=new NotificationChannel("kanal_id","Witaj!", NotificationManager.IMPORTANCE_DEFAULT);
-                            channel.setDescription("Miło cię widzieć , "+imie_input_value+" !");
+                            Powiadomienie();
                             Toast.makeText(MainActivity.this,"Powiadomieni zostało wysłane!",Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -77,5 +85,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    private  void  CreatNotifiChannel(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CH_ID, "kanal_powiadomien!", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("opis_kanalu");
 
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+    private  void Powiadomienie(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+                return;
+            }
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CH_ID).setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("Witaj!").setStyle(new NotificationCompat.BigTextStyle().bigText("Miło cię widzieć , " + imie_input_value + " !")).setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true);
+            NotificationManagerCompat notificationM = NotificationManagerCompat.from(this);
+            notificationM.notify(1, builder.build());
+        }
+    }
 }
