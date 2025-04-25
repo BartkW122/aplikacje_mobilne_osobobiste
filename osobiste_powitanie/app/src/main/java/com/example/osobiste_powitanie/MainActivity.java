@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        AlertDialog.Builder builder2=new AlertDialog.Builder(this);
 
         btn_przywitaj.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     builder.show();
+
                 }else{
 
-                    builder.setTitle("Potwierdzenie");
-                    builder.setMessage("Cześć "+imie_input_value+" ! Czy chcesz otrzymać powiadomienia powitalne?");
-                    builder.setPositiveButton("Tak, poproszę",new DialogInterface.OnClickListener() {
+                    builder2.setTitle("Potwierdzenie");
+                    builder2.setMessage("Cześć "+imie_input_value+" ! Czy chcesz otrzymać powiadomienia powitalne?");
+                    builder2.setPositiveButton("Tak, poproszę",new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -62,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this,"Powiadomieni zostało wysłane!",Toast.LENGTH_SHORT).show();
                         }
                     });
-                    builder.setNegativeButton("Nie, dziękuję",new DialogInterface.OnClickListener() {
+                    builder2.setNegativeButton("Nie, dziękuję",new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                             Toast.makeText(MainActivity.this,"Rozumiemi.Nie wysyłam Powiadomienia!",Toast.LENGTH_SHORT).show();
                         }
                     });
-                    builder.show();
+                    builder2.show();
                 }
             }
         });
